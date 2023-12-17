@@ -94,4 +94,33 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            OnDamaged(collision.transform.position);
+        }
+    }
+
+    void OnDamaged(Vector2 targetPos)
+    {
+        // 레이어 변경
+        gameObject.layer = 11;
+        // 살짝 반투명
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        // 넉백
+        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1) * 5, ForceMode2D.Impulse);
+
+        // 피격 애니메이션
+        animator.SetTrigger("doDamaged");
+
+        Invoke("OffDamaged", 0.5f);
+    }
+
+    void OffDamaged()
+    {
+        gameObject.layer = 10;
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
 }
